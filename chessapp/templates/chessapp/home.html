@@ -1,0 +1,28 @@
+{% extends 'chessapp/base.html' %}
+
+{% block content %}
+<h1>Home</h1>
+
+<h3>New Game</h3>
+<p style="color: red;">{{ error }}</p>
+<form class="userform" method="post">
+  {% csrf_token %}
+
+  <label for="nickname">Winner:</label><br>
+  <input type="text" id="nname" name="player1" placeholder=""><br>
+  <label for="realname">Loser:</label><br>
+  <input type="text" id="rname" name="player2" placeholder=""><br><br>
+
+  <button class="createbutton" id="createbutton" type="Submit" name="createbutton">Submit</button>
+
+</form>
+
+{% for user in users %}
+  {{ user.username }}
+  {{ user.profile.currentELO }}
+  <br>
+{% endfor %}
+
+
+
+{% endblock %}
