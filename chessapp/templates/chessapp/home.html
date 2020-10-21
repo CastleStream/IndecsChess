@@ -4,14 +4,23 @@
 <h1>Home</h1>
 
 <h3>New Game</h3>
-<p style="color: red;">{{ error }}</p>
 <form class="userform" method="post">
   {% csrf_token %}
 
-  <label for="nickname">Winner:</label><br>
+  <p style="color: red;">{{ error1 }}</p>
+  <label for="nickname">Player1:</label><br>
   <input type="text" id="nname" name="player1" placeholder=""><br>
-  <label for="realname">Loser:</label><br>
+
+  <p style="color: red;">{{ error1 }}</p>
+  <label for="realname">Player2:</label><br>
   <input type="text" id="rname" name="player2" placeholder=""><br><br>
+
+  <label for="realname">Winner:</label><br>
+  <select name="outcome" id="outcomedrop">
+    <option value="1">Player1</option>
+    <option value="0">Player2</option>
+    <option value="0.5">Draw</option>
+  </select><br><br>
 
   <button class="createbutton" id="createbutton" type="Submit" name="createbutton">Submit</button>
 

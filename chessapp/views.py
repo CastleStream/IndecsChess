@@ -11,20 +11,17 @@ def home(request):
     if request.method == 'GET':
         return render(request, 'chessapp/home.html', {'users':users})
     elif not username_present(request.POST['player1']):
-        return render(request, 'chessapp/home.html', {'users':users, 'error':'Can not find Player 1.'})
+        return render(request, 'chessapp/home.html', {'users':users, 'error1':'Can not find Player 1.'})
 
     elif not username_present(request.POST['player2']):
-        return render(request, 'chessapp/home.html', {'users':users, 'error':'Can not find Player 2.'})
+        return render(request, 'chessapp/home.html', {'users':users, 'error2':'Can not find Player 2.'})
 
     else:
-        """
-        user1 = authenticate(request, username=request.POST['player1'])
-        user2 = authenticate(request, username=request.POST['player2'])
-        """
         user1 = User.objects.get(username=request.POST['player1'])
         user2 = User.objects.get(username=request.POST['player2'])
+        outcome = float(request.POST['outcome'])
 
-        save_game(user1, user2, 1)
+        save_game(user1, user2, outcome)
 
         profiles = Profile.objects.all().order_by('-currentELO')[:10]
         return render(request, 'chessapp/ranking.html', {'profiles':profiles})
@@ -43,7 +40,7 @@ def createuser(request):
             return redirect('home')
 
         except IntegrityError:
-            return render(request, 'chessapp/createuser.html', {'error':'That nickname has already been taken'})
+            return render(request, 'chessapp/createuser.html', {'error':'That username has already been taken'})
 
 def ranking(request):
     # users = User.objects.all().order_by('profile.currentELO')
@@ -70,7 +67,7 @@ def save_game(player1, player2, result):
     game = Game(player1=player1.username, player2=player2.username, result=result, player1ELO=player1.profile.currentELO, player2ELO=player2.profile.currentELO)
     game.save()
 
-    player1.profile.currentELO, player2.profile.currentELO = game_ELO(player1.profile.currentELO, player2.profile.currentELO, 1)
+    player1.profile.currentELO, player2.profile.currentELO = game_ELO(player1.profile.currentELO, player2.profile.currentELO, result)
     if player1.profile.currentELO > player1.profile.highestELO:
         player1.profile.highestELO = player1.profile.currentELO
 

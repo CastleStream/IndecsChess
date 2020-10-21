@@ -23,14 +23,17 @@ class Profile(models.Model):
         instance.profile.save()
 
 
-
-
 class Game(models.Model):
 
 
     player1 = models.CharField(max_length=20)
     player2 = models.CharField(max_length=20)
-    result = models.IntegerField()
+    result = models.FloatField()
     player1ELO = models.IntegerField()
     player2ELO = models.IntegerField()
     dateTime = models.DateTimeField(auto_now_add=True)
+
+
+    def save_result(self, *args, **kwargs):
+        self.result = round(self.result, 1)
+        super(Game, self).save(*args, **kwargs)
