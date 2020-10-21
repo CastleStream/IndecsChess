@@ -22,6 +22,7 @@ urlpatterns = [
     path('', views.home, name="home"),
     path('create/', views.createuser, name="createuser"),
     path('ranking/', views.ranking, name="ranking"),
-    path('player/<int:todo_pk>', views.playerpage, name='playerpage'),
+    path('player/', views.playersearch, name="playersearch"),
+    path('player/<int:user_pk>', views.playerpage, name='playerpage'),
 
 ]

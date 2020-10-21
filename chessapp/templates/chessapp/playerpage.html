@@ -1,0 +1,12 @@
+{% extends 'chessapp/base.html' %}
+
+{% block content %}
+<h1>{{user.username}}</h1>
+<p><i>{{ user.date_joined }}</i></p>
+<p>Name: {{ user.profile.realname }}</p>
+<p>Current ELO: {{ user.profile.currentELO}}</p>
+<p>Highest ELO: {{ user.profile.highestELO}}</p>
+<p>Lowest ELO: {{ user.profile.lowestELO}}</p>
+
+
+{% endblock %}

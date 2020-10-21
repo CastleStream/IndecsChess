@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.db import IntegrityError
 from django.utils import timezone
-from .models import Game
+from .models import Game, Profile
 
 def home(request):
     users = User.objects.all()
@@ -24,15 +24,10 @@ def home(request):
         user1 = User.objects.get(username=request.POST['player1'])
         user2 = User.objects.get(username=request.POST['player2'])
 
-        save_game(request.POST['player1'], request.POST['player2'], 1,
-                  user1.profile.currentELO, user2.profile.currentELO)
+        save_game(user1, user2, 1)
 
-        user1.profile.currentELO, user2.profile.currentELO = game_ELO(user1.profile.currentELO, user2.profile.currentELO, 1)
-        user1.save()
-        user2.save()
-
-
-        return render(request, 'chessapp/ranking.html', {'users':users})
+        profiles = Profile.objects.all().order_by('-currentELO')[:10]
+        return render(request, 'chessapp/ranking.html', {'profiles':profiles})
 
 
 
@@ -51,16 +46,46 @@ def createuser(request):
             return render(request, 'chessapp/createuser.html', {'error':'That nickname has already been taken'})
 
 def ranking(request):
-    return render(request, 'chessapp/ranking.html')
+    # users = User.objects.all().order_by('profile.currentELO')
+    profiles = Profile.objects.all().order_by('-currentELO')[:10]
+    return render(request, 'chessapp/ranking.html', {'profiles':profiles})
 
 
-def playerpage(request):
-    pass
+def playersearch(request):
+    if request.method == 'GET':
+        return render(request, 'chessapp/playersearch.html')
+    else:
+        user = User.objects.get(username=request.POST['search'])
+        return redirect('playerpage', user.id)
 
 
-def save_game(player1, player2, result, player1ELO, player2ELO):
-    game = Game(player1=player1, player2=player2, result=result, player1ELO=player1ELO, player2ELO=player2ELO)
+
+def playerpage(request, user_pk):
+    user = get_object_or_404(User, pk=user_pk)
+    if request.method == 'GET':
+        return render(request, 'chessapp/playerpage.html', {'user':user})
+
+
+def save_game(player1, player2, result):
+    game = Game(player1=player1.username, player2=player2.username, result=result, player1ELO=player1.profile.currentELO, player2ELO=player2.profile.currentELO)
     game.save()
+
+    player1.profile.currentELO, player2.profile.currentELO = game_ELO(player1.profile.currentELO, player2.profile.currentELO, 1)
+    if player1.profile.currentELO > player1.profile.highestELO:
+        player1.profile.highestELO = player1.profile.currentELO
+
+    if player2.profile.currentELO > player2.profile.highestELO:
+        player2.profile.highestELO = player2.profile.currentELO
+
+    if player1.profile.currentELO < player1.profile.lowestELO:
+        player1.profile.lowestELO = player1.profile.currentELO
+
+    if player2.profile.currentELO < player2.profile.lowestELO:
+        player2.profile.lowestELO = player2.profile.currentELO
+
+    player1.save()
+    player2.save()
+
     return
 
 def game_ELO(rating1, rating2, result):

@@ -2,4 +2,13 @@
 
 {% block content %}
 <h1>Top 10</h1>
+
+
+{% for profile in profiles %}
+<p> {{ profile.user.username }} ({{ profile.currentELO }})</p>
+
+{% endfor %}
+
+
+
 {% endblock %}
