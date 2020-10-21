@@ -11,6 +11,9 @@ class Profile(models.Model):
     highestELO = models.IntegerField(default=1200)
     lowestELO = models.IntegerField(default=1200)
 
+    def __str__(self):
+        return self.user.username
+
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
@@ -24,8 +27,6 @@ class Profile(models.Model):
 
 
 class Game(models.Model):
-
-
     player1 = models.CharField(max_length=20)
     player2 = models.CharField(max_length=20)
     result = models.FloatField()
@@ -33,7 +34,6 @@ class Game(models.Model):
     player2ELO = models.IntegerField()
     dateTime = models.DateTimeField(auto_now_add=True)
 
-
-    def save_result(self, *args, **kwargs):
-        self.result = round(self.result, 1)
-        super(Game, self).save(*args, **kwargs)
+    def __str__(self):
+        name = str(self.player1) + " VS " + str(self.player2) + " " + str(self.dateTime)
+        return name
