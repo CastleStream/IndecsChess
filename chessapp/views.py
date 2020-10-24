@@ -22,10 +22,25 @@ def home(request):
         outcome = float(request.POST['outcome'])
 
         save_game(user1, user2, outcome)
+        user1new, user2new = game_ELO(user1.profile.currentELO, user2.profile.currentELO, outcome)
+        user1change = user1new - user1.profile.currentELO
+        user2change = user2new - user2.profile.currentELO
 
-        profiles = Profile.objects.all().order_by('-currentELO')[:10]
-        return render(request, 'chessapp/ranking.html', {'profiles':profiles})
+        gamedata = {'user1': user1,
+                    'user2': user2,
+                    'outcome': outcome,
+                    'user1change': user1change,
+                    'user2change': user2change}
 
+        if gamedata['outcome'] == 1:
+            gamedata['message'] = 'Player 1 won.'
+        elif gamedata['outcome'] == 0:
+            gamedata['message'] = 'Player 2 won.'
+        else:
+            gamedata['outcome'] = 'Game was draw.'
+
+
+        return render(request, 'chessapp/gameadded.html', {'gamedata':gamedata})
 
 
 def createuser(request):
@@ -54,7 +69,6 @@ def playersearch(request):
     else:
         user = User.objects.get(username=request.POST['search'])
         return redirect('playerpage', user.id)
-
 
 
 def playerpage(request, user_pk):

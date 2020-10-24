@@ -18,9 +18,14 @@ from django.urls import path
 from chessapp import views
 
 urlpatterns = [
+    # User handling
     path('admin/', admin.site.urls),
-    path('', views.home, name="home"),
     path('create/', views.createuser, name="createuser"),
+
+    # Data creation
+    path('', views.home, name="home"),
+
+    # Data visualization
     path('ranking/', views.ranking, name="ranking"),
     path('player/', views.playersearch, name="playersearch"),
     path('player/<int:user_pk>', views.playerpage, name='playerpage'),
