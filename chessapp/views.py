@@ -79,7 +79,7 @@ def playerpage(request, user_pk):
     games = Game.objects.all()
     if request.method == 'GET':
         data = [1200]
-        date = [str(user.date_joined.date())]
+        date = [str(user.date_joined.strftime("%d.%m.%Y"))]
         opponent = []
 
         for game in games:
@@ -88,12 +88,12 @@ def playerpage(request, user_pk):
 
             if game.player1 == user.username:
                 data.append(int(GameELOWhite(game.player1ELO, game.player2ELO, game.result)))
-                date.append(str(game.dateTime.date()))
+                date.append(str(game.dateTime.strftime("%d.%m.%Y")))
                 opponent.append(game.player2)
 
             elif game.player2 == user.username:
                 data.append(int(GameELOBlack(game.player1ELO, game.player2ELO, game.result)))
-                date.append(str(game.dateTime.date()))
+                date.append(str(game.dateTime.strftime("%d.%m.%Y")))
                 opponent.append(game.player1)
 
 

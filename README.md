@@ -6,4 +6,4 @@ Django website where you can create your own chess ELO environment.
   - Create new players
   - Add games between existing players
   - rank players
-  - Search and see stats for players
+  - Keep track of players development
