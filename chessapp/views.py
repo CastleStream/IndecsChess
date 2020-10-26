@@ -4,7 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.db import IntegrityError
 from django.utils import timezone
+from django.http import JsonResponse
 from .models import Game, Profile
+
 
 def home(request):
     users = User.objects.all()
@@ -57,6 +59,7 @@ def createuser(request):
         except IntegrityError:
             return render(request, 'chessapp/createuser.html', {'error':'That username has already been taken'})
 
+
 def ranking(request):
     # users = User.objects.all().order_by('profile.currentELO')
     profiles = Profile.objects.all().order_by('-currentELO')[:10]
@@ -73,8 +76,54 @@ def playersearch(request):
 
 def playerpage(request, user_pk):
     user = get_object_or_404(User, pk=user_pk)
+    games = Game.objects.all()
     if request.method == 'GET':
-        return render(request, 'chessapp/playerpage.html', {'user':user})
+        data = [1200]
+        date = [str(user.date_joined.date())]
+        opponent = []
+
+        for game in games:
+            white = get_object_or_404(User, username=game.player1)
+            black = get_object_or_404(User, username=game.player2)
+
+            if game.player1 == user.username:
+                data.append(int(GameELOWhite(game.player1ELO, game.player2ELO, game.result)))
+                date.append(str(game.dateTime.date()))
+                opponent.append(game.player2)
+
+            elif game.player2 == user.username:
+                data.append(int(GameELOBlack(game.player1ELO, game.player2ELO, game.result)))
+                date.append(str(game.dateTime.date()))
+                opponent.append(game.player1)
+
+
+        return render(request, 'chessapp/playerpage.html', {'user':user, 'data':data, 'date':date})
+
+"""
+def dataToVisuals(request, user_pk):
+    user = get_object_or_404(User, pk=user_pk)
+
+    data = []
+    date = []
+    opponent = []
+
+    for game in Game:
+        if game.player1 == user.username:
+            data.append(GameELOWhite(game.player1, game.player2, game.result))
+            date.append(game.dateTime)
+            opponent.append(game.player2)
+
+        elif game.player2 == user.username:
+            data.append(int(GameELOWhite(game.player1, game.player2, game.result)))
+            date.append(str(game.dateTime))
+            opponent.append(str(game.player1))
+
+    return JsonResponse(data={
+        'data': data,
+        'date': date,
+        'opponent': opponent,
+    })
+"""
 
 
 def save_game(player1, player2, result):
@@ -99,6 +148,7 @@ def save_game(player1, player2, result):
 
     return
 
+
 def game_ELO(rating1, rating2, result):
 
     # Probabilities of winning
@@ -110,6 +160,27 @@ def game_ELO(rating1, rating2, result):
     rating2 += 32*(1 - result - prob_rating2)
 
     return rating1, rating2
+
+
+def GameELOBlack(rating1, rating2, result):
+
+    # Probabilities of winning
+    prob_rating2 = 1/(1+10 ** ((rating1-rating2)/400))
+
+    # Adjusting ELO rantings
+    rating2 += 32*(1 - result - prob_rating2)
+
+    return rating2
+
+
+def GameELOWhite(rating1, rating2, result):
+    # Probabilities of winning
+    prob_rating1 = 1/(1+10 ** ((rating2-rating1)/400))
+
+    # Adjusting ELO rantings
+    rating1 += 32*(result - prob_rating1)
+
+    return rating1
 
 
 def username_present(username):

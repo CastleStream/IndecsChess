@@ -29,5 +29,6 @@ urlpatterns = [
     path('ranking/', views.ranking, name="ranking"),
     path('player/', views.playersearch, name="playersearch"),
     path('player/<int:user_pk>', views.playerpage, name='playerpage'),
+    # path('dataToVisualization/<int:user_pk>', views.dataToVisuals, name="dataToVisuals"),
 
 ]
