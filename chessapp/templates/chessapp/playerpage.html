@@ -1,17 +1,43 @@
 {% extends 'chessapp/base.html' %}
 
 {% block content %}
-<h1>{{user.username}}</h1>
-<p><i>{{ user.date_joined }}</i></p>
-<p>Name: {{ user.profile.realname }}</p>
 
-<p>Current ELO: {{ user.profile.currentELO}}</p>
-<p>Highest ELO: {{ user.profile.highestELO}}</p>
-<p>Lowest ELO: {{ user.profile.lowestELO}}</p>
+<div class="playerpage-container">
+  <h1>{{user.username}}</h1>
+  <div class="base-stats">
+    <p class="info full-name">Name: {{ user.profile.realname }}</p>
+    <p class="info date-joined"><i>Created: {{ user.date_joined }}</i></p>
+  </div>
 
-<div id="container" style="width: 50%;">
-    <canvas id="elo-chart" ></canvas>
+  <div class="measurement-window" id="wrapper">
+
+    <div class="clearfix"></div>
+
+    <div class="measurement-box">
+      <p class="measurement measurement-rating">{{ user.profile.currentELO}}</p>
+      <p class="measurement measurement-title">Current rating</p>
+    </div>
+
+    <div class="measurement-box">
+      <p class="measurement measurement-rating">{{ user.profile.highestELO}}</p>
+      <p class="measurement measurement-title">Highest rating</p>
+    </div>
+
+    <div class="measurement-box">
+      <p class="measurement measurement-rating">{{ user.profile.lowestELO}}</p>
+      <p class="measurement measurement-title">Lowest rating</p>
+    </div>
+
+    <div class="clearfix"></div>
+
+  </div>
+
+  <div id="container" class="chartjs" style="width: 60%;">
+      <canvas id="elo-chart" ></canvas>
+  </div>
+
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
   <script>
@@ -21,17 +47,28 @@
       data: {
         datasets: [{
           data: {{ data|safe }},
+          backgroundColor: 'rgba(192, 31, 41, 0.3)',
+          borderColor: 'rgba(192, 31, 41, 1)',
+
+
           label: 'Rating'
         }],
-        labels: {{ date|safe }}
+        labels: {{ date|safe }},
       },
       options: {
-              responsive: true,
+              tooltips: {
+                intersect: false,
+                responsive: true,
+                maintainAspectRatio: true,
+              },
+
+
               legend: {
-                position: 'top',
+                position: 'bottom',
               },
               title: {
                 display: true,
+
                 text: 'Rating of {{ user.username  }}'
               }
       }
@@ -39,7 +76,7 @@
 
     window.onload = function() {
       var ctx = document.getElementById('elo-chart').getContext('2d');
-      window.myPie = new Chart(ctx, config);
+      window.myLine = new Chart(ctx, config);
     };
 
   </script>

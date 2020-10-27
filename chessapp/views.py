@@ -63,7 +63,14 @@ def createuser(request):
 def ranking(request):
     # users = User.objects.all().order_by('profile.currentELO')
     profiles = Profile.objects.all().order_by('-currentELO')[:10]
-    return render(request, 'chessapp/ranking.html', {'profiles':profiles})
+    ranking = []
+    i = 1
+    for profile in profiles:
+
+        rank = str(i) + ". " + profile.user.username + " (" + str(profile.currentELO) +")"
+        ranking.append(rank)
+        i += 1
+    return render(request, 'chessapp/ranking.html', {'ranking':ranking})
 
 
 def playersearch(request):

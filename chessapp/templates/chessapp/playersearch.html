@@ -1,6 +1,8 @@
 {% extends 'chessapp/base.html' %}
 
 {% block content %}
+
+<h1>Find players</h1><br>
 <form class="form-inline my-2 my-lg-0" action="{% url 'playersearch' %}" method="POST">
   {% csrf_token %}
 

@@ -1,10 +1,21 @@
 {% extends 'chessapp/base.html' %}
 
 {% block content %}
-<h1>Top 10</h1>
 
+<div class="ranking-container">
+  <h1>Top 10</h1>
 
-{% for profile in profiles %}
-<p> {{ profile.user.username }} ({{ profile.currentELO }})</p>
+  <div class="top10-list">
+    {% for rank in ranking %}
+    
+
+    <div class="rank">
+      <p>{{ rank }}</p>
+    </div>
+
+    {% endfor %}
+  </div>
+
+</div>
 
 {% endblock %}
