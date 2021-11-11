@@ -6,9 +6,6 @@ conda==4.3.16
 Django==3.2.9
 google==3.0.0
 keyboard==0.13.5
-menuinst==1.4.16
-MouseInfo==0.1.3
-PyAutoGUI==0.9.52
 pycosat==0.6.3
 PyGetWindow==0.0.9
 PyMsgBox==1.0.9
