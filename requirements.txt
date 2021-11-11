@@ -7,3 +7,4 @@ sqlparse
 typing-extensions==3.10.0.2
 wincertstore==0.2
 gunicorn
+django-heroku
