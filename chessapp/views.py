@@ -10,13 +10,21 @@ from .models import Game, Profile
 
 def home(request):
     users = User.objects.all()
+    games = Game.objects.all()
+
+
+    games_list = []
+    for game in games:
+        games_list.append(game)
+
+
     if request.method == 'GET':
-        return render(request, 'chessapp/home.html', {'users':users})
+        return render(request, 'chessapp/home.html', {'users':users, "games":games_list})
     elif not username_present(request.POST['player1']):
-        return render(request, 'chessapp/home.html', {'users':users, 'error1':'Can not find Player 1.'})
+        return render(request, 'chessapp/home.html', {'users':users, 'error1':'Can not find Player 1.', "games":games_list})
 
     elif not username_present(request.POST['player2']):
-        return render(request, 'chessapp/home.html', {'users':users, 'error2':'Can not find Player 2.'})
+        return render(request, 'chessapp/home.html', {'users':users, 'error2':'Can not find Player 2.', "games":games_list})
 
     else:
         user1 = User.objects.get(username=request.POST['player1'])
@@ -42,7 +50,9 @@ def home(request):
             gamedata['outcome'] = 'Game was draw.'
 
 
-        return render(request, 'chessapp/gameadded.html', {'gamedata':gamedata})
+
+
+        return render(request, 'chessapp/gameadded.html', {'gamedata':gamedata, "games":games_list})
 
 
 def createuser(request):

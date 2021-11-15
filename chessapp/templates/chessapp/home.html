@@ -11,7 +11,7 @@
     <label for="nickname">Player1:</label><br>
     <input type="text" id="nname" name="player1" placeholder=""><br>
 
-    <p style="color: red;">{{ error1 }}</p>
+    <p style="color: red;">{{ error2 }}</p>
     <label for="realname">Player2:</label><br>
     <input type="text" id="rname" name="player2" placeholder=""><br><br>
 
@@ -25,6 +25,34 @@
     <button class="createbutton" id="createbutton" type="Submit" name="createbutton">Submit</button>
 
   </form>
+  <br>
+  <br>
+  <br>
+  <br>
+
+  <div class="game">
+
+    <table>
+      <tr>
+        <th>Player 1</th>
+        <th>Player 2</th>
+        <th>Result</th>
+      </tr>
+
+      {% for game in games %}
+      <tr>
+        <td>{{ game.player1 }}</td>
+        <td>{{ game.player2 }}</td>
+        <td>{{ game.result }}</td>
+      </tr>
+
+       {% endfor %}
+    </table>
+
+    <p>{{ game }}</p>
+  </div>
+
+
 
 </div>
 
